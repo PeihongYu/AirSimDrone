@@ -35,7 +35,7 @@ def main():
 				print ("coninnue------------------")
 			
 			if PREMODEL:
-				prepath = os.path.join(PATH, 'premodel\checkpoint')
+				prepath = os.path.join(DIR, 'premodel/checkpoint')
 				ckpt = tf.train.get_checkpoint_state(os.path.dirname(prepath))
 				if ckpt and ckpt.model_checkpoint_path:
 					saver.restore(agent.sess, ckpt.model_checkpoint_path)
@@ -46,20 +46,21 @@ def main():
 			while True:
 
 				action = agent.act(state)
-				next_state, reward, terminal, info = env.step(action)
+				next_state, reward, terminal, info, cur_pos = env.step(action)
 				#print(reward)
 				episode_reward += reward
 				agent.observe(state, action, reward, next_state, terminal)
 				agent.train()
 				state = next_state
 				step_count += 1
-				print ("aim height: {}".format(env.aim_height).ljust(20," "),"abso height: {:.2f}".format(state[1][0]*100).ljust(20," "), "reward: {:.5f}.".format(reward).ljust(20," "),"steps: {}".format(step_count).ljust(20," "),end = "\r")
+				# print("aim height: {}".format(env.aim_height).ljust(20," "),"abso height: {:.2f}".format(state[1][0]*100).ljust(20," "), "reward: {:.5f}.".format(reward).ljust(20," "),"steps: {}".format(step_count).ljust(20," "),end = "\r")
+				print("aim: {}".format(env.aim).ljust(20," "), "pos: {}".format(cur_pos).ljust(20," "), "abso height: {:.2f}".format(state[1][0]*100).ljust(20," "), "reward: {:.5f}.".format(reward).ljust(20," "),"steps: {}".format(step_count).ljust(20," "),end = "\r")
 
 				if terminal:
 
 					if info == "success":
 						success += 1
-					print (" "*80,end = "\r")
+					print(" "*80,end = "\r")
 					print("episode {} finish, average reward: {:.5f}, total success: {} result: {} step: {}".format(e, episode_reward/step_count, success, info, step_count).ljust(80," "))
 					episode_reward = 0
 					step_count = 0
@@ -69,7 +70,7 @@ def main():
 						nDir = os.path.join(PATH, "data/"+str(int(e//10)))
 						if not os.path.exists(nDir):
 							os.mkdir(nDir)
-						agent.save(saver,DIR,nDir)
+						agent.save(saver,nDir)
 						print("total training episode: {}".format(total_episode))
 					state = env.reset()
 

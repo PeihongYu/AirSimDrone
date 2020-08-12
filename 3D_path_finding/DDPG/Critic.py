@@ -12,12 +12,12 @@ class Critic:
         
         # input for Q network
         self.state = tf.placeholder(tf.float32, [None, state_shape])
-        self.img = tf.placeholder(tf.float32, [None, 64, 64, 3])
+        self.img = tf.placeholder(tf.float32, [None, 64, 64, 1])
         self.action = tf.placeholder(tf.float32, [None, action_dim])
         
         #input for target network
         self.t_state = tf.placeholder(tf.float32, [None, state_shape])
-        self.t_img = tf.placeholder(tf.float32, [None, 64, 64, 3])
+        self.t_img = tf.placeholder(tf.float32, [None, 64, 64, 1])
         self.t_action = tf.placeholder(tf.float32, [None, action_dim])
         
         with tf.variable_scope("critic"):
